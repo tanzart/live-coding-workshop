@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live coding music with Strudel: workshop worksheet</title>
+<meta name="description" content="A follow-along beginner worksheet for live coding music in Strudel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- TODO: edit the text below as you build. Keep the version pinned so the page can't change under you before the workshop. -->
+<script src="https://unpkg.com/@strudel/repl@1.3.0"></script>
+<!-- Hydra for the standalone Hydra section. Pinned; bump after testing. -->
+<script src="https://cdn.jsdelivr.net/npm/hydra-synth@1.4.0/dist/hydra-synth.js" defer></script>
+
+<style>
+  :root {
+    --bg: #f2eefb;
+    --ink: #1c1535;
+    --muted: #5d5678;
+    --accent: #d6246e;
+    --panel: #e6dff6;
+    --line: #cfc5ea;
+    --head: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+    --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 1.0625rem/1.6 var(--body); }
+  nav {
+    position: sticky; top: 0; z-index: 5; background: var(--ink);
+    display: flex; gap: 1.25rem; overflow-x: auto; padding: .75rem 1.25rem; white-space: nowrap;
+  }
+  nav a { color: #e9e3fb; text-decoration: none; font-size: .95rem; }
+  nav a:hover, nav a:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+  header, main { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
+  header { padding-top: 3.5rem; padding-bottom: 1rem; }
+  h1 { font: 800 clamp(2.4rem, 7vw, 4rem)/1.02 var(--head); letter-spacing: -.02em; margin: 0 0 1rem; }
+  h2 { font: 800 1.9rem/1.15 var(--head); margin: 3.5rem 0 .75rem; letter-spacing: -.01em; }
+  h3 { font: 600 1.2rem/1.3 var(--head); margin: 2rem 0 .5rem; }
+  p, ul { margin: .75rem 0; }
+  code { background: var(--panel); padding: .1em .35em; border-radius: 4px; font-size: .92em; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .lede { color: var(--muted); font-size: 1.2rem; max-width: 36rem; }
+  strudel-editor { display: block; margin: 1rem 0 1.5rem; border-radius: 8px; overflow: hidden; }
+  .exercise { border-left: 5px solid var(--accent); background: var(--panel); padding: .5rem 1.25rem 1rem; margin: 2rem 0; border-radius: 0 8px 8px 0; }
+  .exercise h3 { margin-top: .75rem; }
+  .tip { color: var(--muted); font-size: .98rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .98rem; }
+  th, td { text-align: left; padding: .5rem .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--head); font-weight: 600; }
+  footer { max-width: 46rem; margin: 4rem auto 3rem; padding: 0 1.25rem; color: var(--muted); font-size: .95rem; }
+  .table-wrap { overflow-x: auto; }
+  .hydra-box { margin: 1rem 0 1.5rem; }
+  .hydra-box canvas { display: block; width: 100%; aspect-ratio: 16 / 9; background: #120e22; border-radius: 8px 8px 0 0; }
+  .hydra-box textarea {
+    display: block; width: 100%; min-height: 9rem; resize: vertical; border: 0; padding: .9rem 1rem;
+    background: #1b1533; color: #f1ecff; font: .95rem/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; tab-size: 2;
+  }
+  .hydra-bar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; background: #120e22; padding: .6rem .75rem; border-radius: 0 0 8px 8px; }
+  .hydra-bar button { font: 600 .92rem var(--body); border: 0; border-radius: 6px; padding: .45rem .9rem; cursor: pointer; background: #3a2f63; color: #f1ecff; }
+  .hydra-bar button.primary { background: var(--accent); color: #fff; }
+  .hydra-bar button:hover { filter: brightness(1.15); }
+  .hydra-msg { color: #ffb4c8; font-size: .9rem; flex-basis: 100%; min-height: 1.2em; margin: 0; }
+</style>
+</head>
+<body>
+
+<nav aria-label="Worksheet sections">
+  <a href="#start">Getting started</a>
+  <a href="#basics">Basics</a>
+  <a href="#mini">Mini-notation</a>
+  <a href="#theory">Notes and chords</a>
+  <a href="#effects">Effects</a>
+  <a href="#together">Putting it together</a>
+  <a href="#hydra">Hydra visuals</a>
+</nav>
+
+<header>
+  <h1>Live coding music with Strudel</h1>
+  <p class="lede">A follow-along worksheet. Every code block on this page runs, so edit anything and listen to what changes.</p>
+</header>
+
+<main>
+
+<section id="start">
+  <h2>Getting started</h2>
+  <p>Click into a code block, then press <code>Ctrl+Enter</code> (or <code>Cmd+Enter</code> on Mac) to play. Press <code>Ctrl+.</code> to stop.</p>
+  <p>Samples load from the internet the first time you play them, so the first run can be silent for a few seconds. Try again if you hear nothing.</p>
+  <p>Refresh the page to get the original worksheet back. When you are ready for more room, open the full editor at <a href="https://strudel.cc/" target="_blank" rel="noopener">strudel.cc</a>.</p>
+  <!-- TODO: add links to your slides, a Discord/chat, or the venue Wi-Fi details here -->
+</section>
+
+<section id="basics">
+  <h2>Basics</h2>
+  <p><code>sound</code> tells Strudel what to play. The names inside the quotes are the sounds. <code>bd</code> is a bass drum, <code>sd</code> a snare, <code>hh</code> a hi-hat, <code>cp</code> a clap.</p>
+  <strudel-editor>
+<!--
+sound("bd hh sd hh")
+-->
+  </strudel-editor>
+
+  <p>Strudel fits everything you write into one repeating loop, called a cycle. Add more sounds and each one gets shorter, so the pattern speeds up.</p>
+  <strudel-editor>
+<!--
+sound("bd hh sd hh bd bd sd hh")
+-->
+  </strudel-editor>
+
+  <p>To play several patterns at once, start each one with <code>$:</code> on its own line.</p>
+  <strudel-editor>
+<!--
+$: sound("bd*2, ~ cp")
+$: sound("hh*8")
+-->
+  </strudel-editor>
+
+  <div class="exercise">
+    <h3>Exercise 1</h3>
+    <p>Write your own drum pattern with two or three sounds. Then change how many steps it has and notice how the feel changes.</p>
+    <p class="tip">Other sounds to try: <code>oh</code> <code>rim</code> <code>lt</code> <code>mt</code> <code>ht</code> <code>insect</code> <code>wind</code> <code>jazz</code> <code>metal</code> <code>casio</code></p>
+    <strudel-editor>
+<!--
+// your code here
+-->
+    </strudel-editor>
+  </div>
+</section>
+
+<section id="mini">
+  <h2>Mini-notation</h2>
+  <p>The text inside the quotes has its own small set of rules, called mini-notation. These are the main ones.</p>
+
+  <div class="table-wrap">
+  <table>
+    <tr><th>Symbol</th><th>What it does</th><th>Example</th></tr>
+    <tr><td><code>*</code></td><td>Repeat faster</td><td><code>hh*4</code></td></tr>
+    <tr><td><code>/</code></td><td>Stretch over more cycles</td><td><code>bd sd/2</code></td></tr>
+    <tr><td><code>~</code></td><td>Rest (silence)</td><td><code>bd ~ sd ~</code></td></tr>
+    <tr><td><code>[ ]</code></td><td>Squeeze steps into one slot</td><td><code>bd [sd sd]</code></td></tr>
+    <tr><td><code>&lt; &gt;</code></td><td>One step per cycle, alternating</td><td><code>&lt;bd cp&gt; hh</code></td></tr>
+    <tr><td><code>,</code></td><td>Play at the same time</td><td><code>[bd, hh*4]</code></td></tr>
+    <tr><td><code>:</code></td><td>Pick a sample number</td><td><code>casio:2</code></td></tr>
+    <tr><td><code>?</code></td><td>Play 50% of the time</td><td><code>hh*8?</code></td></tr>
+    <tr><td><code>( , )</code></td><td>Euclidean rhythm</td><td><code>bd(3,8)</code></td></tr>
+  </table>
+  </div>
+
+  <h3>Speed up, slow down, rest</h3>
+  <strudel-editor>
+<!--
+sound("bd*2 ~ sd hh*4")
+-->
+  </strudel-editor>
+
+  <h3>Sub-sequences and alternation</h3>
+  <strudel-editor>
+<!--
+sound("bd sd [bd cp] <hh oh>")
+-->
+  </strudel-editor>
+
+  <h3>Randomness</h3>
+  <strudel-editor>
+<!--
+sound("hh*8?")
+-->
+  </strudel-editor>
+
+  <h3>Euclidean rhythms</h3>
+  <p><code>(3,8)</code> spreads 3 hits as evenly as possible across 8 steps. Change the numbers.</p>
+  <strudel-editor>
+<!--
+$: sound("bd(3,8)")
+$: sound("hh(5,8)")
+-->
+  </strudel-editor>
+
+  <div class="exercise">
+    <h3>Exercise 2</h3>
+    <p>Build a beat using at least four of the symbols above. Start simple, add one thing at a time, and listen after every change.</p>
+    <strudel-editor>
+<!--
+// your code here
+-->
+    </strudel-editor>
+  </div>
+</section>
+
+<section id="theory">
+  <h2>Notes, scales and chords</h2>
+  <p>For melodies, use <code>note</code> with note names. The number is the octave, so <code>c3</code> is lower than <code>c4</code>. Add <code>#</code> for sharp or <code>b</code> for flat, as in <code>f#3</code> or <code>eb3</code>.</p>
+  <strudel-editor>
+<!--
+note("c3 e3 g3 e3").sound("sawtooth")
+-->
+  </strudel-editor>
+
+  <h3>Scales</h3>
+  <p>Scales keep you in key. With <code>n</code> and <code>scale</code>, you write numbers (steps of the scale) and every number sounds good together. Try swapping <code>minor</code> for <code>major</code>.</p>
+  <strudel-editor>
+<!--
+n("0 2 4 7 4 2").scale("C4:minor").sound("triangle")
+-->
+  </strudel-editor>
+
+  <h3>Chords</h3>
+  <p>Notes inside square brackets separated by commas play together. This is how you write a chord.</p>
+  <strudel-editor>
+<!--
+note("<[c3,eb3,g3] [ab2,c3,eb3] [f2,ab2,c3] [g2,b2,d3]>")
+  .sound("sawtooth").lpf(1200)
+-->
+  </strudel-editor>
+
+  <h3>Bass line with a chord progression</h3>
+  <strudel-editor>
+<!--
+$: note("<c2 ab1 f1 g1>*2").sound("sawtooth").lpf(400)
+$: note("<[c3,eb3,g3] [ab2,c3,eb3] [f2,ab2,c3] [g2,b2,d3]>")
+  .sound("triangle").gain(.6)
+-->
+  </strudel-editor>
+
+  <div class="exercise">
+    <h3>Exercise 3</h3>
+    <p>Write a short melody in a scale you choose. Then add a bass note underneath that changes each cycle with <code>&lt; &gt;</code>.</p>
+    <p class="tip">Scale names to try: <code>C4:major</code> <code>D4:dorian</code> <code>A3:minor:pentatonic</code> <code>E3:blues</code></p>
+    <strudel-editor>
+<!--
+// your code here
+-->
+    </strudel-editor>
+  </div>
+</section>
+
+<section id="effects">
+  <h2>Effects</h2>
+  <p>Add effects by chaining them onto a pattern with a dot. Each one takes a number, or a pattern of numbers.</p>
+
+  <div class="table-wrap">
+  <table>
+    <tr><th>Function</th><th>What it does</th></tr>
+    <tr><td><code>.lpf(n)</code></td><td>Low-pass filter: lower numbers sound darker and muffled</td></tr>
+    <tr><td><code>.hpf(n)</code></td><td>High-pass filter: higher numbers sound thinner</td></tr>
+    <tr><td><code>.gain(n)</code></td><td>Volume (1 is normal)</td></tr>
+    <tr><td><code>.pan(n)</code></td><td>Stereo position: 0 is left, 1 is right</td></tr>
+    <tr><td><code>.room(n)</code></td><td>Reverb</td></tr>
+    <tr><td><code>.delay(n)</code></td><td>Echo</td></tr>
+    <tr><td><code>.speed(n)</code></td><td>Playback speed and pitch of a sample</td></tr>
+    <tr><td><code>.shape(n)</code></td><td>Distortion</td></tr>
+    <tr><td><code>.vowel("a")</code></td><td>Vowel filter, like a voice</td></tr>
+  </table>
+  </div>
+
+  <h3>A filter on a bassline</h3>
+  <strudel-editor>
+<!--
+note("c2 c2 eb2 g1").sound("sawtooth").lpf(500)
+-->
+  </strudel-editor>
+
+  <h3>Reverb and echo</h3>
+  <strudel-editor>
+<!--
+sound("hh*2 cp ~").room(.6).delay(.4)
+-->
+  </strudel-editor>
+
+  <h3>Moving an effect over time</h3>
+  <p>A signal like <code>sine</code> gives a smoothly changing value. <code>.range</code> sets its lowest and highest values, and <code>.slow</code> makes it take longer.</p>
+  <strudel-editor>
+<!--
+note("c2 c2 eb2 g1").sound("sawtooth")
+  .lpf(sine.range(200, 3000).slow(4))
+-->
+  </strudel-editor>
+
+  <div class="exercise">
+    <h3>Exercise 4</h3>
+    <p>Take your melody from Exercise 3 and add two effects. Then make one of them move with <code>sine</code>.</p>
+    <strudel-editor>
+<!--
+// your code here
+-->
+    </strudel-editor>
+  </div>
+</section>
+
+<section id="together">
+  <h2>Putting it together</h2>
+  <p>Here is a small track using everything above. Change it, break it, delete it and start again.</p>
+  <strudel-editor>
+<!--
+$: sound("bd*2, ~ cp, hh*8?").gain(.8)
+
+$: note("<c2 ab1 f1 g1>*2").sound("sawtooth").lpf(sine.range(300, 900).slow(8))
+
+$: note("<[c3,eb3,g3] [ab2,c3,eb3] [f2,ab2,c3] [g2,b2,d3]>")
+  .sound("triangle").room(.5).gain(.5)
+
+$: n("0 2 4 7 4 2 ~ 4").scale("C4:minor").sound("square")
+  .lpf(2000).delay(.3).gain(.4)
+-->
+  </strudel-editor>
+
+  <div class="exercise">
+    <h3>Final exercise</h3>
+    <p>Make a short sketch of your own. Don't plan it out: use your ears and react to what you hear. If you like it, delete it and try to recreate the feel. If you get bored of a sound, change it.</p>
+    <strudel-editor>
+<!--
+// your code here
+-->
+    </strudel-editor>
+  </div>
+</section>
+
+<section id="hydra">
+  <h2>Hydra visuals</h2>
+  <p>Hydra is a live-coding language for visuals. It works like Strudel: you chain small functions together and the picture updates when you run it. Press <code>Run</code> (or <code>Ctrl+Enter</code> in the code box) to start.</p>
+
+  <div class="hydra-box">
+    <canvas id="hydra-canvas" width="960" height="540" aria-label="Hydra output"></canvas>
+    <textarea id="hydra-code" spellcheck="false" aria-label="Hydra code">osc(10, 0.1, 1.2).out()</textarea>
+    <div class="hydra-bar">
+      <button class="primary" id="hydra-run">Run</button>
+      <button id="hydra-stop">Stop</button>
+      <span class="tip" style="color:#bdb3e0">Examples:</span>
+      <button data-preset="osc">1 Oscillator</button>
+      <button data-preset="chain">2 Chaining</button>
+      <button data-preset="mod">3 Modulation</button>
+      <button data-preset="time">4 Time</button>
+      <button data-preset="feedback">5 Feedback</button>
+      <p class="hydra-msg" id="hydra-msg" role="status"></p>
+    </div>
+  </div>
+
+  <h3>The pattern is always: source, transforms, output</h3>
+  <p>Every Hydra line starts with a source like <code>osc()</code>, <code>noise()</code> or <code>shape()</code>, adds transforms like <code>.rotate()</code>, <code>.kaleid()</code> or <code>.color()</code>, and ends with <code>.out()</code>. Try the five examples above and change one number at a time.</p>
+
+  <div class="table-wrap">
+  <table>
+    <tr><th>Function</th><th>What it does</th></tr>
+    <tr><td><code>osc(freq, sync, offset)</code></td><td>Stripes. Frequency sets how many.</td></tr>
+    <tr><td><code>noise(scale)</code></td><td>Smooth random texture</td></tr>
+    <tr><td><code>shape(sides, size)</code></td><td>A polygon (a circle at high side counts)</td></tr>
+    <tr><td><code>.rotate(angle, speed)</code></td><td>Spin the image</td></tr>
+    <tr><td><code>.kaleid(n)</code></td><td>Mirror into n segments</td></tr>
+    <tr><td><code>.color(r, g, b)</code></td><td>Tint with red, green, blue (0 to 1)</td></tr>
+    <tr><td><code>.modulate(source, amount)</code></td><td>Warp the image using another one</td></tr>
+    <tr><td><code>src(o0)</code></td><td>Read the previous frame (feedback)</td></tr>
+    <tr><td><code>() =&gt; time</code></td><td>Use a function so a value changes over time</td></tr>
+  </table>
+  </div>
+
+  <div class="exercise">
+    <h3>Exercise 5</h3>
+    <p>Start from the Modulation example. Change the colours, add a <code>.kaleid()</code>, then make one value move with <code>() =&gt; Math.sin(time)</code>.</p>
+  </div>
+  <!-- TODO: add a section here on connecting Hydra to Strudel (await initHydra() and H(pattern) inside a strudel-editor) -->
+</section>
+
+</main>
+
+<footer>
+  <p>Built with <a href="https://strudel.cc/" target="_blank" rel="noopener">Strudel</a>. Explore more in the <a href="https://strudel.cc/workshop/getting-started/" target="_blank" rel="noopener">official workshop</a>.</p>
+</footer>
+
+<script>
+(function () {
+  var presets = {
+    osc: 'osc(10, 0.1, 1.2).out()',
+    chain: 'osc(20, 0.1, 0)\n  .rotate(0.5)\n  .kaleid(5)\n  .color(1, 0.4, 0.8)\n  .out()',
+    mod: 'osc(10, 0.1, 0.5)\n  .modulate(noise(3, 0.3), 0.3)\n  .color(0.4, 0.8, 1)\n  .out()',
+    time: 'osc(15, 0.1, () => Math.sin(time) + 1)\n  .rotate(() => time * 0.1)\n  .kaleid(4)\n  .out()',
+    feedback: 'src(o0)\n  .scale(1.01)\n  .rotate(0.01)\n  .blend(shape(4, 0.3, 0.02).color(1, 0.3, 0.6), 0.05)\n  .out()'
+  };
+  var canvas = document.getElementById('hydra-canvas');
+  var box = document.getElementById('hydra-code');
+  var msg = document.getElementById('hydra-msg');
+  var hydra = null;
+
+  function start() {
+    if (hydra) return true;
+    if (typeof Hydra === 'undefined') { msg.textContent = 'Hydra has not loaded yet. Check your connection and try again.'; return false; }
+    try {
+      hydra = new Hydra({ canvas: canvas, width: 960, height: 540, detectAudio: false, makeGlobal: false });
+      return true;
+    } catch (e) { msg.textContent = 'Could not start Hydra (it needs WebGL): ' + e.message; return false; }
+  }
+  function run() {
+    if (!start()) return;
+    try { hydra.eval(box.value); msg.textContent = ''; }
+    catch (e) { msg.textContent = e.message; }
+  }
+  document.getElementById('hydra-run').addEventListener('click', run);
+  document.getElementById('hydra-stop').addEventListener('click', function () { if (hydra) hydra.hush(); });
+  box.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
+  });
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () { box.value = presets[b.dataset.preset]; run(); });
+  });
+})();
+</script>
+</body>
+</html>
