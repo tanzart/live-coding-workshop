@@ -142,7 +142,7 @@ $: s("bd hh sd hh bd bd sd hh").bank("RolandTR909")
 
   <h4>Strudel's built-in sounds</h4>
   <p>Drums to try: <code>bd</code> <code>sd</code> <code>hh</code> <code>oh</code> <code>cp</code> <code>rim</code> <code>lt</code> <code>mt</code> <code>ht</code>. Other sounds: <code>casio</code> <code>jazz</code> <code>metal</code> <code>insect</code> <code>wind</code> <code>piano</code>. Open the <em>Sounds</em> tab on strudel.cc to browse them all.</p>
-  <p>Most sounds are a bank of samples. Pick one by number with <code>n</code>:</p>
+  <p>Most sounds are a bank of samples. Try a few: </p>
   <strudel-editor>
 <!--
 $: note("0 1 2 3 4").s("casio")
@@ -281,7 +281,7 @@ $: s("white ~ ~ ~").decay(.2).sustain(0).lpf(300)
 $: s("pink").lpf(sine.range(200, 5000).slow(8)).gain(.4)
 -->
   </strudel-editor>
-  <p><code>crackle</code> is bursts of tiny clicks, like vinyl. <code>.density</code> controls how many.</p>
+  <p><code>crackle</code> is bursts of tiny clicks. <code>.density</code> controls how many.</p>
   <strudel-editor>
 <!--
 $: s("crackle*4").density("<.01 .04 .2 .5>")
