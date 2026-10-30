@@ -16,8 +16,6 @@
   * { box-sizing:border-box; }
   html { scroll-behavior:smooth; scroll-padding-top:4.5rem; }
   body { margin:0; background:var(--bg); color:var(--ink); font:1.0625rem/1.65 var(--body); }
-  body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.55;
-    background:url("logo.jpg") center top / cover no-repeat; }
   nav { position:sticky; top:0; z-index:5; background:#000; border-bottom:2px solid var(--accent); display:flex; gap:1.25rem; overflow-x:auto; padding:.75rem 1.25rem; white-space:nowrap; }
   nav a { color:#fff; text-decoration:none; font:400 .85rem var(--head); text-transform:uppercase; letter-spacing:.04em; }
   nav a:hover, nav a:focus-visible { color:var(--accent); }
@@ -80,7 +78,7 @@
 }
 
 .contact a {
-  color: #ff4fa3;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -147,15 +145,15 @@ $: s("bd hh sd hh bd bd sd hh").bank("RolandTR909")
   <p>Most sounds are a bank of samples. Pick one by number with <code>n</code>:</p>
   <strudel-editor>
 <!--
-$: n("0 1 2 3 4").s("casio")
+$: note("0 1 2 3 4").s("casio")
 -->
   </strudel-editor>
 
   <h4>Basic notes</h4>
-  <p>For melodies use <code>note</code>. <code>n</code> (short for <code>note</code>).  Letters are note names and the number is the octave (<code>c3</code> is lower than <code>c4</code>). No music theory needed: change the letters and numbers, and keep what you like.</p>
+  <p>For melodies use <code>note</code>. Letters are note names and the number is the octave (<code>c3</code> is lower than <code>c4</code>). No music theory needed: change the letters and numbers, and keep what you like.</p>
   <strudel-editor>
 <!--
-$: n("c3 e3 g3 e3").s("sawtooth")
+$: note("c3 e3 g3 e3").s("sawtooth")
 -->
   </strudel-editor>
   <p class="tip">Self-discovery: Strudel can also do scales and chords. Search the docs for <code>scale</code> to find out how.</p>
@@ -204,7 +202,7 @@ $: stack(
 <!--
 $: s("bd*2, ~ cp").room(.5)
 $: s("hh*8").gain(.5)
-_$: n("c2 c2 eb2 g1").s("sawtooth").lpf(400)
+_$: note("c2 c2 eb2 g1").s("sawtooth").lpf(400)
 -->
   </strudel-editor>
 
@@ -234,21 +232,21 @@ _$: n("c2 c2 eb2 g1").s("sawtooth").lpf(400)
   <p>This plays the same notes with each wave in turn, one per cycle. Listen for the difference.</p>
   <strudel-editor>
 <!--
-$: n("c3 e3 g3 e3").s("<sine triangle sawtooth square>")
+$: note("c3 e3 g3 e3").s("<sine triangle sawtooth square>")
 -->
   </strudel-editor>
   <p>Now all four at once, and a bass line one octave down.</p>
   <strudel-editor>
 <!--
-$: n("c2 c2 eb2 g1").s("sawtooth").lpf(500)
-$: n("c4 e4 g4 e4").s("sine").gain(.6)
-$: n("c4 g4").s("square").gain(.2)
+$: note("c2 c2 eb2 g1").s("sawtooth").lpf(500)
+$: note("c4 e4 g4 e4").s("sine").gain(.6)
+$: note("c4 g4").s("square").gain(.2)
 -->
   </strudel-editor>
   <p>See the wave shape drawn live. <code>._scope()</code> shows an oscilloscope under the code.</p>
   <strudel-editor>
 <!--
-$:n("c2").s("<sine triangle sawtooth square>")._scope()
+$:note("c2").s("<sine triangle sawtooth square>")._scope()
 -->
   </strudel-editor>
   <div class="exercise">
@@ -324,7 +322,7 @@ $: s("hh*2 cp ~").room(.6).delay(.4)
   <p>A signal like <code>sine</code> gives a smoothly changing value. <code>.range</code> sets the lowest and highest values and <code>.slow</code> stretches it over more cycles.</p>
   <strudel-editor>
 <!--
-$: n("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
+$: note("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
 -->
   </strudel-editor>
   <div class="exercise">
@@ -338,15 +336,15 @@ $: n("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
   </div>
 </section>
 
-<section id="Summation">
+<section id="summation">
   <h3>Putting it together</h3>
   <p>A small track using everything above. Change it, break it, delete it and start again.</p>
   <strudel-editor>
 <!--
 $: s("bd*2, ~ cp").bank("RolandTR909").gain(.8)
 $: s("white*8").decay(.04).sustain(0).hpf(6000).gain(.3)
-$: n("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(sine.range(300, 900).slow(8))
-$: n("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
+$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(sine.range(300, 900).slow(8))
+$: note("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
 -->
   </strudel-editor>
   <div class="exercise">
