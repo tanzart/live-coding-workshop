@@ -60,13 +60,41 @@
     body { background:#fff; } body::before, nav, .hydra-box { display:none; }
     header, main, footer { background:none; } code { color:#000; }
   }
+
+.contact {
+  margin-top: 100px;
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid #444;
+}
+
+.contact h2 {
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  margin-bottom: 25px;
+}
+
+.contact p {
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.contact a {
+  color: #ff4fa3;
+  text-decoration: none;
+}
+
+.contact a:hover {
+  text-decoration: underline;
+}
+
  
 </style>
 </head>
 <body>
 
 <nav aria-label="Worksheet sections">
-  <a href="#start">Getting started</a>
+  <a href="#start">Start</a>
   <a href="#strudel">Strudel</a>
   <a href="#basics">Basics</a>
   <a href="#synths">Synths</a>
@@ -87,7 +115,7 @@
 <main>
 
 <section id="start">
-  <h3>Getting started</h3>
+  <h3>Start</h3>
   <p>Click into a code block, then press <code>Ctrl+Enter</code> (<code>Cmd+Enter</code> on Mac) to play. Press <code>Ctrl+.</code> to stop.</p>
   <p>Sounds load from the internet the first time you play them, so the first run can be silent for a few seconds. Try again if you hear nothing. Headphones on, please.</p>
   <p>Refresh the page to reset the worksheet. For more room, open the full editor at <a href="https://strudel.cc/" target="_blank" rel="noopener">strudel.cc</a>.</p>
@@ -104,13 +132,13 @@
   <p><code>s</code> (short for <code>sound</code>) tells Strudel what to play. <code>bd</code> is a bass drum, <code>sd</code> a snare, <code>hh</code> a hi-hat, <code>cp</code> a clap. Everything you write is squeezed into one repeating loop, called a cycle.</p>
   <strudel-editor>
 <!--
-s("bd hh sd hh")
+$: s("bd hh sd hh")
 -->
   </strudel-editor>
   <p>Add more sounds and each one gets shorter, so the pattern speeds up. Swap the drum kit with <code>.bank</code>.</p>
   <strudel-editor>
 <!--
-s("bd hh sd hh bd bd sd hh").bank("RolandTR909")
+$: s("bd hh sd hh bd bd sd hh").bank("RolandTR909")
 -->
   </strudel-editor>
 
@@ -119,15 +147,15 @@ s("bd hh sd hh bd bd sd hh").bank("RolandTR909")
   <p>Most sounds are a bank of samples. Pick one by number with <code>n</code>:</p>
   <strudel-editor>
 <!--
-n("0 1 2 3 4").s("casio")
+$: n("0 1 2 3 4").s("casio")
 -->
   </strudel-editor>
 
   <h4>Basic notes</h4>
-  <p>For melodies use <code>note</code>. Letters are note names and the number is the octave (<code>c3</code> is lower than <code>c4</code>). No music theory needed: change the letters and numbers, and keep what you like.</p>
+  <p>For melodies use <code>note</code>. <code>n</code> (short for <code>note</code>).  Letters are note names and the number is the octave (<code>c3</code> is lower than <code>c4</code>). No music theory needed: change the letters and numbers, and keep what you like.</p>
   <strudel-editor>
 <!--
-note("c3 e3 g3 e3").s("sawtooth")
+$: n("c3 e3 g3 e3").s("sawtooth")
 -->
   </strudel-editor>
   <p class="tip">Self-discovery: Strudel can also do scales and chords. Search the docs for <code>scale</code> to find out how.</p>
@@ -145,12 +173,12 @@ note("c3 e3 g3 e3").s("sawtooth")
     <tr><td><code>,</code></td><td>Play at the same time</td><td><code>bd*2, hh*4</code></td></tr>
     <tr><td><code>:</code></td><td>Pick a sample number</td><td><code>casio:2</code></td></tr>
     <tr><td><code>?</code></td><td>Play 50% of the time</td><td><code>hh*8?</code></td></tr>
-    <tr><td><code>( , )</code></td><td>Euclidean rhythm</td><td><code>bd(3,8)</code></td></tr>
+    <tr><td><code>( #1, #2 )</code></td><td>Euclidean rhythm</td><td><code>bd(3,8)</code></td></tr>
   </table>
   </div>
   <strudel-editor>
 <!--
-s("bd*2 ~ sd [hh hh] <oh cp> hh*4?")
+$: s("bd*2 ~ sd [hh hh] <oh cp> hh*4?")
 -->
   </strudel-editor>
   <p><code>(3,8)</code> spreads 3 hits as evenly as possible across 8 steps. Change the numbers.</p>
@@ -165,7 +193,7 @@ $: s("hh(5,8)")
   <p>There are two ways to play several patterns at once. A <code>stack</code> bundles them into one pattern, so an effect on the end applies to all of them.</p>
   <strudel-editor>
 <!--
-stack(
+$: stack(
   s("bd*2, ~ cp"),
   s("hh*8")
 ).room(.5)
@@ -176,7 +204,7 @@ stack(
 <!--
 $: s("bd*2, ~ cp").room(.5)
 $: s("hh*8").gain(.5)
-_$: note("c2 c2 eb2 g1").s("sawtooth").lpf(400)
+_$: n("c2 c2 eb2 g1").s("sawtooth").lpf(400)
 -->
   </strudel-editor>
 
@@ -198,29 +226,29 @@ _$: note("c2 c2 eb2 g1").s("sawtooth").lpf(400)
   <table>
     <tr><th>Sound</th><th>What it sounds like</th></tr>
     <tr><td><code>sine</code></td><td>Pure and smooth, like a soft flute or a sub bass</td></tr>
-    <tr><td><code>triangle</code></td><td>Like a sine but slightly brighter and hollower</td></tr>
-    <tr><td><code>sawtooth</code></td><td>Buzzy and bright. The classic synth sound (also works as <code>saw</code>)</td></tr>
-    <tr><td><code>square</code></td><td>Hollow and reedy, like an old video game</td></tr>
+    <tr><td><code>triangle</code></td><td>Soft and roundish - pleasant alarm tones </td></tr>
+    <tr><td><code>sawtooth</code></td><td>Brassy and bright. The classic synth sound (also works as <code>saw</code>)</td></tr>
+    <tr><td><code>square</code></td><td>Hollow and angry, sounds like a clarinet</td></tr>
   </table>
   </div>
   <p>This plays the same notes with each wave in turn, one per cycle. Listen for the difference.</p>
   <strudel-editor>
 <!--
-note("c3 e3 g3 e3").s("<sine triangle sawtooth square>")
+$: n("c3 e3 g3 e3").s("<sine triangle sawtooth square>")
 -->
   </strudel-editor>
   <p>Now all four at once, and a bass line one octave down.</p>
   <strudel-editor>
 <!--
-$: note("c2 c2 eb2 g1").s("sawtooth").lpf(500)
-$: note("c4 e4 g4 e4").s("sine").gain(.6)
-$: note("c4 g4").s("square").gain(.2)
+$: n("c2 c2 eb2 g1").s("sawtooth").lpf(500)
+$: n("c4 e4 g4 e4").s("sine").gain(.6)
+$: n("c4 g4").s("square").gain(.2)
 -->
   </strudel-editor>
   <p>See the wave shape drawn live. <code>._scope()</code> shows an oscilloscope under the code.</p>
   <strudel-editor>
 <!--
-note("c2").s("<sine triangle sawtooth square>")._scope()
+$:n("c2").s("<sine triangle sawtooth square>")._scope()
 -->
   </strudel-editor>
   <div class="exercise">
@@ -239,7 +267,7 @@ note("c2").s("<sine triangle sawtooth square>")._scope()
   <p>Noise is random sound with no pitch. It is the raw material for hi-hats, snares, wind and static. Strudel has <code>white</code> (bright hiss), <code>pink</code> (softer) and <code>brown</code> (deep rumble). Turn the volume down first.</p>
   <strudel-editor>
 <!--
-s("<white pink brown>").gain(.4)
+$: s("<white pink brown>").gain(.4)
 -->
   </strudel-editor>
   <p>Noise plus a short envelope is a drum. <code>.decay</code> sets how fast it fades and <code>.sustain(0)</code> stops it holding on.</p>
@@ -252,13 +280,13 @@ $: s("white ~ ~ ~").decay(.2).sustain(0).lpf(300)
   <p>Sweep a filter across noise for wind or a riser.</p>
   <strudel-editor>
 <!--
-s("pink").lpf(sine.range(200, 5000).slow(8)).gain(.4)
+$: s("pink").lpf(sine.range(200, 5000).slow(8)).gain(.4)
 -->
   </strudel-editor>
   <p><code>crackle</code> is bursts of tiny clicks, like vinyl. <code>.density</code> controls how many.</p>
   <strudel-editor>
 <!--
-s("crackle*4").density("<.01 .04 .2 .5>")
+$: s("crackle*4").density("<.01 .04 .2 .5>")
 -->
   </strudel-editor>
   <div class="exercise">
@@ -286,18 +314,17 @@ s("crackle*4").density("<.01 .04 .2 .5>")
     <tr><td><code>.delay(n)</code></td><td>Echo</td></tr>
     <tr><td><code>.speed(n)</code></td><td>Playback speed and pitch of a sample</td></tr>
     <tr><td><code>.shape(n)</code></td><td>Distortion</td></tr>
-    <tr><td><code>.vowel("a")</code></td><td>Vowel filter, like a voice</td></tr>
   </table>
   </div>
   <strudel-editor>
 <!--
-s("hh*2 cp ~").room(.6).delay(.4)
+$: s("hh*2 cp ~").room(.6).delay(.4)
 -->
   </strudel-editor>
   <p>A signal like <code>sine</code> gives a smoothly changing value. <code>.range</code> sets the lowest and highest values and <code>.slow</code> stretches it over more cycles.</p>
   <strudel-editor>
 <!--
-note("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
+$: n("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
 -->
   </strudel-editor>
   <div class="exercise">
@@ -311,15 +338,15 @@ note("c2 c2 eb2 g1").s("sawtooth").lpf(sine.range(200, 3000).slow(4))
   </div>
 </section>
 
-<section id="together">
+<section id="Summation">
   <h3>Putting it together</h3>
   <p>A small track using everything above. Change it, break it, delete it and start again.</p>
   <strudel-editor>
 <!--
 $: s("bd*2, ~ cp").bank("RolandTR909").gain(.8)
 $: s("white*8").decay(.04).sustain(0).hpf(6000).gain(.3)
-$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(sine.range(300, 900).slow(8))
-$: note("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
+$: n("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(sine.range(300, 900).slow(8))
+$: n("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
 -->
   </strudel-editor>
   <div class="exercise">
@@ -379,42 +406,27 @@ $: note("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
   <p>Strudel has Hydra built in. Put <code>await initHydra()</code> on the first line of a Strudel block and write Hydra code under it. The visuals draw behind the page.</p>
   <div class="note"><p><strong>If you can't see visuals:</strong> use the full editor at <a href="https://strudel.cc/" target="_blank" rel="noopener">strudel.cc</a>. Paste a block in, run it, and the visuals draw behind the editor.</p></div>
 
-  <h4>1. Visuals that follow your pattern</h4>
-  <p><code>H(...)</code> turns a pattern into a number Hydra can use. Here, a pattern of numbers mirrors the kick, so the picture warps on every hit.</p>
-  <strudel-editor>
-<!--
-await initHydra()
 
-$: s("bd ~ bd ~").bank("RolandTR909")
-$: s("hh*8").gain(.4)
 
-osc(10, 0.1, 1)
-  .modulate(noise(3), H("1 0 1 0"))
-  .color(1, 0.3, 0.7)
-  .out()
--->
-  </strudel-editor>
-  <p class="tip">Keep the <code>H</code> pattern lined up with your drums. If you change the beat, change the pattern too.</p>
-
-  <h4>2. Visuals that listen to the sound</h4>
+  <h4> Visuals that listen to the sound</h4>
   <p>This version reads the actual audio through your microphone, so any sound in the room moves the picture (including your speakers). Your browser will ask for microphone permission. <code>a.fft[0]</code> is the strength of the lowest frequencies, from 0 to 1.</p>
   <strudel-editor>
 <!--
 await initHydra({ detectAudio: true })
 
-$: s("bd*2, ~ cp, hh*8").bank("RolandTR909")
-$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(400)
-
 osc(10, 0.1, () => a.fft[0] * 4)
   .kaleid(4)
   .scale(() => 1 + a.fft[0])
   .out()
+
+$: s("bd*2, ~ cp, hh*8").bank("RolandTR909")
+$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(400)
 -->
   </strudel-editor>
 
   <div class="exercise">
     <h4>Exercise 6</h4>
-    <p>Combine your own beat from earlier with Hydra. Try a different <code>H</code> pattern, or use <code>a.fft[1]</code>, <code>a.fft[2]</code> and so on for higher frequencies.</p>
+    <p>Combine your own beat from earlier with Hydra. Use <code>a.fft[1]</code>, <code>a.fft[2]</code> and so on for higher frequencies.</p>
     <strudel-editor>
 <!--
 await initHydra()
@@ -434,6 +446,26 @@ await initHydra()
     <li><a href="https://youtu.be/2eP0cKM8Jmg?si=EyOJ_UTQsdQ39AuV" target="_blank" rel="noopener">Hydra tutorial (YouTube)</a></li>
   </ul>
 </section>
+
+  
+<section class="contact">
+  <h2>STAY CONNECTED</h2>
+
+  <p>
+    Have questions? I'd love to hear from you!
+    <br>
+    Email me at
+    <a href="mailto:ichbintanz@icloud.com">ichbintanz@icloud.com</a>
+  </p>
+
+  <p>
+    Want to catch me playing live?
+    <br>
+    Follow me on
+    <a href="https://www.instagram.com/_tanzart/" target="_blank" rel="noopener noreferrer">Instagram @ _tanzart</a>
+  </p>
+</section>
+
 
 </main>
 
