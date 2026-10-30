@@ -411,14 +411,16 @@ $: note("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
   <strudel-editor>
 <!--
 await initHydra({ detectAudio: true })
-
+    
+$: s("bd*2, ~ cp, hh*8").bank("RolandTR909")
+$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(400)
+    
 osc(10, 0.1, () => a.fft[0] * 4)
   .kaleid(4)
   .scale(() => 1 + a.fft[0])
   .out()
 
-$: s("bd*2, ~ cp, hh*8").bank("RolandTR909")
-$: note("<c2 ab1 f1 g1>*2").s("sawtooth").lpf(400)
+
 -->
   </strudel-editor>
 
