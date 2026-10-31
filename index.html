@@ -53,9 +53,10 @@
   .hydra-bar button:hover { border-color:var(--accent); color:var(--accent); }
   .hydra-bar button.primary:hover { color:#000; filter:brightness(1.1); }
   .hydra-msg { color:#ffb4f4; font-size:.9rem; flex-basis:100%; min-height:1.2em; margin:0; }
+  .ed-bar { border:1px solid var(--line); border-radius:6px 6px 0 0; margin-top:1rem; }
   @media print {
     :root { --ink:#000; --muted:#444; --panel:#eee; --line:#bbb; --accent:#b0008e; }
-    body { background:#fff; } body::before, nav, .hydra-box { display:none; }
+    body { background:#fff; } body::before, nav, .hydra-box, .ed-bar { display:none; }
     header, main, footer { background:none; } code { color:#000; }
   }
   .contact { margin-top: 100px; padding: 40px 20px; text-align: center; border-top: 1px solid #444;
@@ -96,7 +97,7 @@
 
 <section id="start">
   <h3>Start</h3>
-  <p>Click into a code block, then press <code>Ctrl+Enter</code> (<code>Cmd+Enter</code> on Mac) to play. Press <code>Ctrl+.</code> to stop. Use <code> Ctrl+ /</code> to comment out lines of code you don't want to play. </p>
+  <p>Click into a code block, then press <code>Ctrl+Enter</code> (<code>Cmd+Enter</code> on Mac) to play, or use the <code>▶ Play</code> button above it. Press <code>Ctrl+.</code> or the <code>■ Stop</code> button to stop. Use <code> Ctrl+ /</code> to comment out lines of code you don't want to play. </p>
   <p>Sounds load from the internet the first time you play them, so the first run can be silent for a few seconds. Try again if you hear nothing. Headphones on, please.</p>
   <p>Refresh the page to reset the worksheet. Once you feel like you want more room, open the full editor at <a href="https://strudel.cc/" target="_blank" rel="noopener">strudel.cc</a>.</p>
   <!-- TODO: add slides link / chat link / Wi-Fi details here -->
@@ -344,13 +345,13 @@ $: note("c4 e4 g4 e4 ~ g4 e4 ~").s("square").lpf(2000).delay(.3).gain(.2)
 <p class="lede">Live-code visuals. Same idea as Strudel: chain small functions, run, change, run.</p>
 
 <section>
-  <p>Press <code>Run</code> (or <code>Ctrl+Enter</code> in the code box). Try the five examples, changing one number at a time.</p>
+  <p>Press <code>▶ Play</code> (or <code>Ctrl+Enter</code> in the code box). Try the five examples, changing one number at a time.</p>
   <div class="hydra-box">
     <canvas id="hydra-canvas" width="960" height="540" aria-label="Hydra output"></canvas>
     <textarea id="hydra-code" spellcheck="false" aria-label="Hydra code">osc(10, 0.1, 1.2).out()</textarea>
     <div class="hydra-bar">
-      <button class="primary" id="hydra-run">Run</button>
-      <button id="hydra-stop">Stop</button>
+      <button class="primary" id="hydra-run">▶ Play</button>
+      <button id="hydra-stop">■ Stop</button>
       <button data-preset="osc">1 Oscillator</button>
       <button data-preset="chain">2 Chaining</button>
       <button data-preset="mod">3 Modulation</button>
@@ -488,6 +489,20 @@ await initHydra()
   box.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); } });
   document.querySelectorAll('[data-preset]').forEach(function (b) {
     b.addEventListener('click', function () { box.value = presets[b.dataset.preset]; run(); });
+  });
+
+  /* Play / Stop buttons above every Strudel editor */
+  document.querySelectorAll('strudel-editor').forEach(function (el) {
+    var bar = document.createElement('div');
+    bar.className = 'hydra-bar ed-bar';
+    var play = document.createElement('button');
+    play.className = 'primary'; play.type = 'button'; play.textContent = '▶ Play';
+    var stop = document.createElement('button');
+    stop.type = 'button'; stop.textContent = '■ Stop';
+    play.addEventListener('click', function () { if (el.editor) el.editor.evaluate(); });
+    stop.addEventListener('click', function () { if (el.editor) el.editor.stop(); });
+    bar.appendChild(play); bar.appendChild(stop);
+    el.after(bar);
   });
 })();
 </script>
